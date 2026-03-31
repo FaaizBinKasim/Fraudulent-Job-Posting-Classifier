@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze Job Posting | JobGuard{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="two-column-layout">
+        <!-- Left Column: Form -->
+        <div class="column-main">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2>Analyze Job Posting</h2>
+                    <p>Enter job details to verify authenticity</p>
+                </div>
+
+                {% if error %}
+                <div class="error-banner">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span><strong>Error:</strong> {{ error }}</span>
+                </div>
+                {% endif %}
+
+                <form id="predictionForm" method="POST" action="/predict" class="prediction-form">
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">Basic Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="title">Job Title <span class="required">*</span></label>
+                            <input type="text" id="title" name="title" placeholder="e.g., Senior Software Engineer" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Job Description <span class="required">*</span></label>
+                            <textarea id="description" name="description" rows="5" placeholder="Enter the full job description..." required></textarea>
+                            <span class="char-count"><span id="desc-count">0</span> characters</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="requirements">Requirements</label>
+                            <textarea id="requirements" name="requirements" rows="3" placeholder="List required skills and qualifications..."></textarea>
+                            <span class="char-count"><span id="req-count">0</span> characters</span>
+                        </div>
+                    </div>
+
+                    <!-- Company Details Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">Company Details</h3>
+                        
+                        <div class="form-group">
+                            <label for="company_profile">Company Profile</label>
+                            <textarea id="company_profile" name="company_profile" rows="3" placeholder="Information about the company..."></textarea>
+                            <span class="char-count"><span id="profile-count">0</span> characters</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="benefits">Benefits</label>
+                            <textarea id="benefits" name="benefits" rows="2" placeholder="List of benefits offered..."></textarea>
+                            <span class="char-count"><span id="benefits-count">0</span> characters</span>
+                        </div>
+                    </div>
+
+                    <!-- Job Specifications Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">Job Specifications</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="employment_type">Employment Type</label>
+                                <div class="dynamic-field-wrapper" data-field-name="employment_type">
+                                    <select id="employment_type" name="employment_type" class="dynamic-select">
+                                        <option value="Full-time">Full-time</option>
+                                        <option value="Part-time">Part-time</option>
+                                        <option value="Contract">Contract</option>
+                                        <option value="Temporary">Temporary</option>
+                                        <option value="Internship">Internship</option>
+                                        <option value="Unknown">Unknown</option>
+                                        <option value="__OTHER__">Other (Specify)</option>
+                                    </select>
+                                    <input type="text" id="employment_type_other" name="employment_type" class="dynamic-input" placeholder="Enter employment type" style="display: none;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="required_experience">Required Experience</label>
+                                <div class="dynamic-field-wrapper" data-field-name="required_experience">
+                                    <select id="required_experience" name="required_experience" class="dynamic-select">
+                                        <option value="Entry level">Entry level</option>
+                                        <option value="Mid-Senior level" selected>Mid-Senior level</option>
+                                        <option value="Associate">Associate</option>
+                                        <option value="Executive">Executive</option>
+                                        <option value="Director">Director</option>
+                                        <option value="Not Applicable">Not Applicable</option>
+                                        <option value="Unknown">Unknown</option>
+                                        <option value="__OTHER__">Other (Specify)</option>
+                                    </select>
+                                    <input type="text" id="required_experience_other" name="required_experience" class="dynamic-input" placeholder="Enter required experience" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="required_education">Required Education</label>
+                                <div class="dynamic-field-wrapper" data-field-name="required_education">
+                                    <select id="required_education" name="required_education" class="dynamic-select">
+                                        <option value="High School or equivalent">High School or equivalent</option>
+                                        <option value="Bachelor's Degree" selected>Bachelor's Degree</option>
+                                        <option value="Master's Degree">Master's Degree</option>
+                                        <option value="Doctorate">Doctorate</option>
+                                        <option value="Some College Coursework Completed">Some College Coursework Completed</option>
+                                        <option value="Vocational">Vocational</option>
+                                        <option value="Certification">Certification</option>
+                                        <option value="Unknown">Unknown</option>
+                                        <option value="__OTHER__">Other (Specify)</option>
+                                    </select>
+                                    <input type="text" id="required_education_other" name="required_education" class="dynamic-input" placeholder="Enter required education" style="display: none;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="industry">Industry</label>
+                                <input type="text" id="industry" name="industry" placeholder="e.g., Computer Software" value="Computer Software">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="function">Function</label>
+                            <input type="text" id="function" name="function" placeholder="e.g., Engineering" value="Engineering">
+                        </div>
+                    </div>
+
+                    <!-- Additional Features Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">Additional Features</h3>
+                        
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_company_logo" name="has_company_logo" value="1" checked>
+                                <label for="has_company_logo">Company has logo</label>
+                            </div>
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="has_questions" name="has_questions" value="1">
+                                <label for="has_questions">Job posting has questions</label>
+                            </div>
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="telecommuting" name="telecommuting" value="1">
+                                <label for="telecommuting">Telecommuting available</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="submitBtn">
+                            <span class="btn-text">Analyze Job Posting</span>
+                            <span class="btn-loader" style="display: none;">
+                                <svg class="spinner" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" stroke-dasharray="32" stroke-dashoffset="32">
+                                        <animate attributeName="stroke-dasharray" dur="2s" values="0 32;16 16;0 32;0 32" repeatCount="indefinite"/>
+                                        <animate attributeName="stroke-dashoffset" dur="2s" values="0;-16;-32;-32" repeatCount="indefinite"/>
+                                    </circle>
+                                </svg>
+                            </span>
+                        </button>
+                        <button type="reset" class="btn-secondary">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column: Info Panel -->
+        <div class="column-sidebar">
+            <div class="info-panel">
+                <h3>How It Works</h3>
+                <ul class="info-list">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <span>AI analyzes multiple factors including job description quality, company information, and posting structure</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <span>Machine learning model trained on thousands of verified job postings</span>
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <span>Results provided instantly with detailed risk analysis</span>
+                    </li>
+                </ul>
+
+                <div class="tips-block">
+                    <h4>Tips for Spotting Fake Jobs</h4>
+                    <ul class="tips-list">
+                        <li>Be wary of postings requesting upfront payments</li>
+                        <li>Verify company details through official channels</li>
+                        <li>Check for suspiciously high salaries with minimal requirements</li>
+                        <li>Look for professional company profiles and logos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

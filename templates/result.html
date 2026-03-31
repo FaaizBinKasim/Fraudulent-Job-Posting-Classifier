@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Result | JobGuard{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="result-layout">
+        <!-- Top Section: Classification & Risk Summary -->
+        <div class="result-header-section">
+            <!-- Main Classification Card -->
+            <div class="classification-card">
+                <div class="classification-header">
+                    {% if label == "Fraudulent" %}
+                    <div class="classification-badge fraud">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <div class="badge-content">
+                            <span class="badge-title">Fraudulent Job Posting</span>
+                            <span class="badge-subtitle">High Risk Detected</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="classification-badge legitimate">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <div class="badge-content">
+                            <span class="badge-title">Legitimate Job Posting</span>
+                            <span class="badge-subtitle">Verified Safe</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="classification-message {% if label == 'Fraudulent' %}fraud{% else %}legitimate{% endif %}">
+                    {% if label == "Fraudulent" %}
+                    <div class="message-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <h3>Warning: Potential Fraud Detected</h3>
+                        <p>Our AI analysis indicates characteristics commonly associated with fraudulent listings. Please exercise caution and verify details through official channels before proceeding.</p>
+                    </div>
+                    {% else %}
+                    <div class="message-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <h3>Verified: Legitimate Posting</h3>
+                        <p>Based on our analysis, this posting shows characteristics consistent with legitimate listings. However, we still recommend verifying company details before applying.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Risk Summary Card -->
+            <div class="risk-summary-card">
+                <div class="risk-header">
+                    <h4>Risk Assessment</h4>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                        <path d="M2 17L12 22L22 17"/>
+                        <path d="M2 12L12 17L22 12"/>
+                    </svg>
+                </div>
+                
+                <div class="risk-badge-container">
+                    {% if "High" in risk_level %}
+                    <div class="risk-badge high">
+                        <div class="risk-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            </svg>
+                        </div>
+                        <div class="risk-content">
+                            <span class="risk-label">Risk Level</span>
+                            <span class="risk-value">{{ risk_level }}</span>
+                        </div>
+                    </div>
+                    {% elif "Low" in risk_level %}
+                    <div class="risk-badge low">
+                        <div class="risk-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div class="risk-content">
+                            <span class="risk-label">Risk Level</span>
+                            <span class="risk-value">{{ risk_level }}</span>
+                        </div>
+                    </div>
+                    {% elif "Medium-High" in risk_level %}
+                    <div class="risk-badge medium-high">
+                        <div class="risk-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                                <path d="M2 17L12 22L22 17"/>
+                                <path d="M2 12L12 17L22 12"/>
+                            </svg>
+                        </div>
+                        <div class="risk-content">
+                            <span class="risk-label">Risk Level</span>
+                            <span class="risk-value">{{ risk_level }}</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="risk-badge medium">
+                        <div class="risk-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                                <path d="M2 17L12 22L22 17"/>
+                                <path d="M2 12L12 17L22 12"/>
+                            </svg>
+                        </div>
+                        <div class="risk-content">
+                            <span class="risk-label">Risk Level</span>
+                            <span class="risk-value">{{ risk_level }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="summary-meta">
+                    <div class="meta-divider"></div>
+                    <div class="meta-items">
+                        <div class="meta-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                                <path d="M2 17L12 22L22 17"/>
+                                <path d="M2 12L12 17L22 12"/>
+                            </svg>
+                            <div class="meta-content">
+                                <span class="meta-label">Method</span>
+                                <span class="meta-value">ML Classification</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                                <path d="M2 17L12 22L22 17"/>
+                                <path d="M2 12L12 17L22 12"/>
+                            </svg>
+                            <div class="meta-content">
+                                <span class="meta-label">Model</span>
+                                <span class="meta-value">v1.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score Cards Grid -->
+        <div class="score-cards-section">
+            <h3 class="section-heading">Detailed Analysis Scores</h3>
+            <div class="score-cards-grid">
+                <!-- Semantic Fraud Score -->
+                <div class="score-card">
+                    <div class="score-card-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <h4>Semantic Fraud Score</h4>
+                    </div>
+                    <div class="score-display">
+                        <div class="circular-progress" data-score="{{ fraud_semantic_score }}" data-type="fraud">
+                            <svg class="progress-ring" width="100" height="100">
+                                <circle class="progress-ring-background" cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6"/>
+                                <circle class="progress-ring-progress" cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number">{{ fraud_semantic_score }}</span>
+                                <span class="score-max">/ 100</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-interpretation">
+                        {% if fraud_semantic_score >= 70 %}
+                        <p class="score-bad">High fraud likelihood detected</p>
+                        {% elif fraud_semantic_score >= 40 %}
+                        <p class="score-warning">Moderate fraud indicators present</p>
+                        {% else %}
+                        <p class="score-good">Low fraud likelihood</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Employer Credibility Score -->
+                <div class="score-card">
+                    <div class="score-card-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        <h4>Employer Credibility</h4>
+                    </div>
+                    <div class="score-display">
+                        <div class="circular-progress" data-score="{{ employer_credibility }}" data-type="credibility">
+                            <svg class="progress-ring" width="100" height="100">
+                                <circle class="progress-ring-background" cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6"/>
+                                <circle class="progress-ring-progress" cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number">{{ employer_credibility }}</span>
+                                <span class="score-max">/ 100</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-interpretation">
+                        {% if employer_credibility >= 70 %}
+                        <p class="score-good">High employer credibility</p>
+                        {% elif employer_credibility >= 40 %}
+                        <p class="score-warning">Moderate credibility signals</p>
+                        {% else %}
+                        <p class="score-bad">Low credibility indicators</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Details Section -->
+        <div class="risk-details-section">
+            <div class="risk-detail-card">
+                <h4>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Red Flags Detected
+                </h4>
+                <div class="risk-detail-content">
+                    {% if red_flags and red_flags != "None detected" %}
+                    <div class="red-flags-list">
+                        {% for flag in red_flags.split(", ") %}
+                        <span class="red-flag-tag">{{ flag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="no-red-flags">✓ No suspicious phrases detected</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="risk-detail-card">
+                <h4>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Personal Data Risk
+                </h4>
+                <div class="risk-detail-content">
+                    {% if personal_risk.startswith("High") %}
+                    <div class="personal-risk-high">
+                        <strong>⚠️ High Risk:</strong> {{ personal_risk.split("(")[1].replace(")", "") if "(" in personal_risk else "Sensitive data requested" }}
+                    </div>
+                    {% else %}
+                    <div class="personal-risk-low">
+                        <strong>✓ Low Risk:</strong> No requests for sensitive personal information detected
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="recommendations-section">
+            <h3 class="section-heading">Recommendations & Next Steps</h3>
+            <div class="recommendations-grid">
+                <div class="recommendation-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <p>Verify company details through official websites and LinkedIn</p>
+                </div>
+                <div class="recommendation-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <p>Be cautious of postings requesting upfront payments or personal financial information</p>
+                </div>
+                <div class="recommendation-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <p>Research the company's online presence and reviews</p>
+                </div>
+                <div class="recommendation-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <p>Trust your instincts - if something seems too good to be true, it might be</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="result-actions">
+            <a href="/" class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Analyze Another Posting
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
